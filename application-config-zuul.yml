@@ -1,0 +1,34 @@
+server:
+  port: 2010
+spring:
+  application:
+    name: zuul-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka1:1010/eureka,http://eureka2:1020/eureka
+  instance:
+    instance-id: zuul:2010
+    prefer-ip-address: false
+zuul:
+  routes:
+    myUser.serviceId:   # 服务名
+    myUser.path: /myUser/** # 把myUser打头的所有请求都转发给user-provider
+  ignored-services: "*" #所有服务都不允许以服务名来访问
+  prefix: "/xx" #加一个统一前缀
+
+zuul:
+  retryable: true
+ribbon:
+  connectTimeout: 2000 # 连接超时时间(ms)
+  readTimeout: 2000 # 通信超时时间(ms)
+  okToRetryOnAllOperations: true # 是否对所有操作重试
+  maxAutoRetriesNextServer: 2 # 同一服务不同实例的重试次数
+  maxAutoRetries: 1 # 同一实例的重试次数
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 3000 # 熔断超时时长：3000ms
